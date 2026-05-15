@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
-
 class ProductShimmer extends StatelessWidget {
   const ProductShimmer({super.key});
 
@@ -13,7 +12,7 @@ class ProductShimmer extends StatelessWidget {
         crossAxisCount: 2,
         childAspectRatio: 0.7,
       ),
-      itemBuilder: (_, __) {
+      itemBuilder: (_, _) {
         return Shimmer.fromColors(
           baseColor: Colors.grey[300]!,
           highlightColor: Colors.grey[100]!,

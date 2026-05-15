@@ -20,19 +20,19 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-
       appBar: AppBar(
         title: Text(
-          "ShopSphere",
+          "YAD STORE",
           style: TextStyle(
             fontSize: 24.sp,
             fontWeight: FontWeight.bold,
             color: AppColors.dark,
           ),
         ),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.white,
       ),
-
-      // ADD PRODUCT BUTTON
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.primary,
         onPressed: () {
@@ -43,40 +43,44 @@ class HomePage extends StatelessWidget {
         },
         child: const Icon(Icons.add),
       ),
-
       body: Padding(
         padding: EdgeInsets.all(16.w),
         child: Column(
           children: [
             /// SEARCH BOX
-            TextField(
-              onChanged: (value) {
-                context.read<ProductBloc>().add(SearchProductEvent(value));
-              },
-              decoration: const InputDecoration(
-                border: InputBorder.none,
-                hintText: "Search products...",
-                icon: Icon(Icons.search),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12.r),
+                boxShadow: [
+                  BoxShadow(color: Colors.grey.withOpacity(0.1), blurRadius: 5),
+                ],
+              ),
+              child: TextField(
+                onChanged: (value) {
+                  context.read<ProductBloc>().add(SearchProductEvent(value));
+                },
+                decoration: InputDecoration(
+                  hintText: "Search products...",
+                  prefixIcon: const Icon(Icons.search),
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 14.h,
+                  ),
+                ),
               ),
             ),
-
             SizedBox(height: 20.h),
-
-            /// PRODUCTS LIST
             Expanded(
               child: BlocBuilder<ProductBloc, ProductState>(
                 builder: (context, state) {
-                  /// LOADING STATE
                   if (state is ProductLoading) {
                     return const ProductShimmer();
                   }
-
-                  /// ERROR STATE
                   if (state is ProductError) {
                     return Center(child: Text(state.message));
                   }
-
-                  /// SUCCESS STATE
                   if (state is ProductLoaded) {
                     return RefreshIndicator(
                       onRefresh: () async {
@@ -92,7 +96,6 @@ class HomePage extends StatelessWidget {
                         ),
                         itemBuilder: (context, index) {
                           final product = state.filteredProducts[index];
-
                           return GestureDetector(
                             onTap: () {
                               Navigator.push(
@@ -103,73 +106,72 @@ class HomePage extends StatelessWidget {
                                 ),
                               );
                             },
-
                             child: Container(
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(24.r),
+                                borderRadius: BorderRadius.circular(16.r),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.1),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  /// IMAGE
-                                  Expanded(
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(24.r),
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(16.r),
+                                    ),
+                                    child: CachedNetworkImage(
+                                      imageUrl: product.thumbnail,
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                      height: 150.h,
+                                      placeholder: (context, url) => Container(
+                                        color: Colors.grey[100],
+                                        child: const Center(
+                                          child: CircularProgressIndicator(),
+                                        ),
                                       ),
-                                      child: CachedNetworkImage(
-                                        imageUrl: product.thumbnail,
-                                        fit: BoxFit.cover,
-                                        width: double.infinity,
-                                        placeholder: (context, url) =>
-                                            const Center(
-                                              child:
-                                                  CircularProgressIndicator(),
-                                            ),
-                                        errorWidget: (context, url, error) =>
-                                            const Icon(Icons.error),
-                                      ),
+                                      errorWidget: (context, url, error) =>
+                                          Container(
+                                            color: Colors.grey[100],
+                                            child: const Icon(Icons.error),
+                                          ),
                                     ),
                                   ),
-
                                   Padding(
                                     padding: EdgeInsets.all(12.w),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        /// TITLE
                                         Text(
                                           product.title,
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 16.sp,
+                                            fontSize: 14.sp,
                                           ),
                                         ),
-
                                         SizedBox(height: 8.h),
-
-                                        /// PRICE
                                         Text(
                                           "\$${product.price}",
                                           style: TextStyle(
                                             color: AppColors.primary,
-                                            fontSize: 18.sp,
+                                            fontSize: 16.sp,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
-
                                         SizedBox(height: 8.h),
-
-                                        /// ACTION BUTTONS
                                         Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            /// EDIT
                                             IconButton(
                                               onPressed: () {
                                                 Navigator.push(
@@ -184,11 +186,10 @@ class HomePage extends StatelessWidget {
                                               },
                                               icon: const Icon(
                                                 Icons.edit,
-                                                color: Colors.blue,
+                                                size: 20,
                                               ),
+                                              color: Colors.blue,
                                             ),
-
-                                            /// DELETE
                                             IconButton(
                                               onPressed: () {
                                                 context.read<ProductBloc>().add(
@@ -196,7 +197,6 @@ class HomePage extends StatelessWidget {
                                                     id: product.id,
                                                   ),
                                                 );
-
                                                 ScaffoldMessenger.of(
                                                   context,
                                                 ).showSnackBar(
@@ -209,8 +209,9 @@ class HomePage extends StatelessWidget {
                                               },
                                               icon: const Icon(
                                                 Icons.delete,
-                                                color: Colors.red,
+                                                size: 20,
                                               ),
+                                              color: Colors.red,
                                             ),
                                           ],
                                         ),
@@ -225,7 +226,6 @@ class HomePage extends StatelessWidget {
                       ),
                     );
                   }
-
                   return const SizedBox();
                 },
               ),
